@@ -331,3 +331,63 @@
 .cabinet {
   container-type: inline-size;
 }
+
+/* ---- on-screen pause button (touch + mouse) ---- */
+.pause-button {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  width: 42px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 16, 42, 0.55);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.pause-button:hover {
+  border-color: rgba(34, 211, 238, 0.6);
+  background: rgba(16, 16, 42, 0.8);
+}
+.pause-button:focus-visible {
+  outline: 2px solid var(--c-cyan-hot);
+  outline-offset: 2px;
+}
+.pause-button-bars {
+  display: flex;
+  gap: 4px;
+}
+.pause-button-bars span {
+  width: 4px;
+  height: 14px;
+  border-radius: 1px;
+  background: var(--c-cyan);
+  box-shadow: 0 0 6px rgba(34, 211, 238, 0.6);
+}
+
+/* ---- touch hint (menu) — only on coarse/touch pointers ---- */
+.touch-hint {
+  display: none;
+  margin-top: 22px;
+  max-width: 230px;
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0.08em;
+  color: var(--c-muted);
+}
+@media (hover: none) and (pointer: coarse) {
+  .controls {
+    display: none;
+  }
+  .touch-hint {
+    display: block;
+  }
+}

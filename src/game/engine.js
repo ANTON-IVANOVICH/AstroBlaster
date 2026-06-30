@@ -37,10 +37,12 @@ export function createGame(canvas, options = {}) {
 }
 
 class Game {
-  constructor(canvas, { keys, callbacks } = {}) {
+  constructor(canvas, { keys, pointer, callbacks } = {}) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d', { alpha: false })
     this.keys = keys || { left: false, right: false, up: false, down: false, fire: false }
+    // Touch/pointer drag: when active, the ship tracks (x,y) and auto-fires.
+    this.pointer = pointer || { active: false, x: 0, y: 0 }
     this.callbacks = callbacks || {}
 
     this.dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -89,6 +91,12 @@ class Game {
     cancelAnimationFrame(this.raf)
     if (this._ro) this._ro.disconnect()
     else window.removeEventListener('resize', this._onResize)
+  }
+
+  // Current ship position in canvas-logical (CSS-pixel) units — used to
+  // anchor a touch drag so the ship doesn't jump to the finger.
+  getPlayerPos() {
+    return { x: this.player.x, y: this.player.y }
   }
 
   setPhase(p) {
@@ -238,23 +246,29 @@ class Game {
     const p = this.player
 
     // --- player movement ---
-    let mvx = 0
-    let mvy = 0
-    if (this.keys.left) mvx -= 1
-    if (this.keys.right) mvx += 1
-    if (this.keys.up) mvy -= 1
-    if (this.keys.down) mvy += 1
-    if (mvx && mvy) {
-      mvx *= Math.SQRT1_2
-      mvy *= Math.SQRT1_2
+    if (this.pointer.active) {
+      // Touch drag: ship tracks the finger 1:1 (clamped to the playfield).
+      p.x = clamp(this.pointer.x, PLAYER.marginX, w - PLAYER.marginX)
+      p.y = clamp(this.pointer.y, h * PLAYER.marginTop, h - PLAYER.marginBottom)
+    } else {
+      let mvx = 0
+      let mvy = 0
+      if (this.keys.left) mvx -= 1
+      if (this.keys.right) mvx += 1
+      if (this.keys.up) mvy -= 1
+      if (this.keys.down) mvy += 1
+      if (mvx && mvy) {
+        mvx *= Math.SQRT1_2
+        mvy *= Math.SQRT1_2
+      }
+      p.x = clamp(p.x + mvx * PLAYER.speed * dt, PLAYER.marginX, w - PLAYER.marginX)
+      p.y = clamp(p.y + mvy * PLAYER.speed * dt, h * PLAYER.marginTop, h - PLAYER.marginBottom)
     }
-    p.x = clamp(p.x + mvx * PLAYER.speed * dt, PLAYER.marginX, w - PLAYER.marginX)
-    p.y = clamp(p.y + mvy * PLAYER.speed * dt, h * PLAYER.marginTop, h - PLAYER.marginBottom)
     if (p.iTimer > 0) p.iTimer -= dt
 
-    // --- player fire (auto while held) ---
+    // --- player fire (auto while SPACE held or while touch-dragging) ---
     p.fireT -= dt
-    if (this.keys.fire && p.fireT <= 0) {
+    if ((this.keys.fire || this.pointer.active) && p.fireT <= 0) {
       p.fireT = PLAYER.fireInterval
       this.lasers.push({ x: p.x - PLAYER.laserSpread, y: p.y - 22 }, { x: p.x + PLAYER.laserSpread, y: p.y - 22 })
     }

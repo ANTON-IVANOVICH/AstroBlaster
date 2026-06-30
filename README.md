@@ -14,6 +14,7 @@ A vertical neon scroll-shooter (shmup) in the spirit of Galaga / 1942 — built 
 | `Space` (hold) | Auto-fire |
 | `Esc` / `P` | Pause / resume |
 | `Enter` / `Space` | Confirm on menu & game-over |
+| **Touch** | Drag anywhere to fly — the ship follows your finger and auto-fires; tap the **❙❙** button (top) to pause |
 
 ## Gameplay
 
@@ -51,4 +52,4 @@ Pushes to `main` are built and published to GitHub Pages by [`.github/workflows/
 
 ## Not in v1 (backlog)
 
-Power-ups / weapon upgrades, shields, bosses, levels, audio, cross-session high-score persistence, and touch controls — all intentionally out of scope, layered on later over the working core.
+Power-ups / weapon upgrades, shields, bosses, levels, audio, and cross-session high-score persistence — all intentionally out of scope, layered on later over the working core. (Touch controls landed post-v1.)

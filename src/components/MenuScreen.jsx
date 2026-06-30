@@ -37,6 +37,10 @@ export default function MenuScreen({ onPlay }) {
           <span className="control-label">ПАУЗА</span>
         </div>
       </div>
+
+      <p className="touch-hint">
+        Веди пальцем по полю — корабль летит за пальцем и ведёт огонь автоматически. Кнопка «II» сверху — пауза.
+      </p>
     </div>
   )
 }

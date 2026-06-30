@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import GameCanvas from './components/GameCanvas.jsx'
 import Hud from './components/Hud.jsx'
+import PauseButton from './components/PauseButton.jsx'
 import MenuScreen from './components/MenuScreen.jsx'
 import PauseOverlay from './components/PauseOverlay.jsx'
 import GameOverScreen from './components/GameOverScreen.jsx'
@@ -15,8 +16,9 @@ export default function App() {
   const [hud, setHud] = useState(FRESH_HUD)
   const [best, setBest] = useState(0)
 
-  // Shared keyboard ref the game loop reads each frame (never via state).
+  // Shared input refs the game loop reads each frame (never via state).
   const keysRef = useRef({ left: false, right: false, up: false, down: false, fire: false })
+  const pointerRef = useRef({ active: false, x: 0, y: 0 })
 
   // Latest phase, readable from the (stable) keyboard listener.
   const phaseRef = useRef(phase)
@@ -52,11 +54,18 @@ export default function App() {
   return (
     <div className="app">
       <div className="cabinet">
-        <GameCanvas phase={phase} keys={keysRef.current} onHud={onHud} onGameOver={onGameOver} />
+        <GameCanvas
+          phase={phase}
+          keys={keysRef.current}
+          pointer={pointerRef.current}
+          onHud={onHud}
+          onGameOver={onGameOver}
+        />
 
         {(phase === PHASE.PLAYING || phase === PHASE.PAUSED) && (
           <Hud score={hud.score} lives={hud.lives} wave={hud.wave} />
         )}
+        {phase === PHASE.PLAYING && <PauseButton onPause={togglePause} />}
         {phase === PHASE.MENU && <MenuScreen onPlay={startGame} />}
         {phase === PHASE.PAUSED && <PauseOverlay onResume={togglePause} onMenu={toMenu} />}
         {phase === PHASE.GAMEOVER && (
