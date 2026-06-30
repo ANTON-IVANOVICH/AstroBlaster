@@ -8,7 +8,12 @@ import { PHASE } from '../game/constants.js'
 //   - forwards phase changes into the engine,
 //   - relays the engine's throttled UI callbacks to the latest props,
 //   - translates touch drags into the shared `pointer` input.
-export default function GameCanvas({ phase, keys, pointer, onHud, onGameOver }) {
+//
+// It receives the keys/pointer *refs* and reads `.current` only inside
+// effects/handlers — never during render. (This component still mutates the
+// shared pointer, so the React Compiler intentionally skips it; that's fine,
+// it has nothing to memoize.)
+export default function GameCanvas({ phase, keysRef, pointerRef, onHud, onGameOver }) {
   const canvasRef = useRef(null)
   const engineRef = useRef(null)
   const cbRef = useRef({ onHud, onGameOver })
@@ -22,8 +27,8 @@ export default function GameCanvas({ phase, keys, pointer, onHud, onGameOver }) 
 
   useEffect(() => {
     const engine = createGame(canvasRef.current, {
-      keys,
-      pointer,
+      keys: keysRef.current,
+      pointer: pointerRef.current,
       callbacks: {
         onHud: (h) => cbRef.current.onHud?.(h),
         onGameOver: (s) => cbRef.current.onGameOver?.(s),
@@ -35,7 +40,7 @@ export default function GameCanvas({ phase, keys, pointer, onHud, onGameOver }) 
       engine.destroy()
       engineRef.current = null
     }
-  }, [keys, pointer])
+  }, [keysRef, pointerRef])
 
   useEffect(() => {
     phaseRef.current = phase
@@ -43,15 +48,16 @@ export default function GameCanvas({ phase, keys, pointer, onHud, onGameOver }) 
     // Leaving play (pause / game over) cancels any in-progress drag.
     if (phase !== PHASE.PLAYING) {
       dragRef.current.id = null
-      pointer.active = false
+      pointerRef.current.active = false
     }
-  }, [phase, pointer])
+  }, [phase, pointerRef])
 
   // Touch drag → pointer. Ship tracks the finger relative to where the drag
   // began (no teleport), and auto-fires while a finger is down.
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
+    const pointer = pointerRef.current
 
     const local = (touch) => {
       const rect = canvas.getBoundingClientRect()
@@ -107,7 +113,7 @@ export default function GameCanvas({ phase, keys, pointer, onHud, onGameOver }) 
       canvas.removeEventListener('touchend', onEnd)
       canvas.removeEventListener('touchcancel', onEnd)
     }
-  }, [pointer])
+  }, [pointerRef])
 
   return <canvas ref={canvasRef} className="game-canvas" aria-hidden="true" />
 }

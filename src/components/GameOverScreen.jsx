@@ -4,7 +4,7 @@ import { formatScore } from '../format.js'
 export default function GameOverScreen({ score, best, onRetry, onMenu }) {
   return (
     <div className="screen over-screen">
-      <div className="over-kicker">КОРАБЛЬ УНИЧТОЖЕН</div>
+      <div className="over-kicker">SHIP DESTROYED</div>
       <div className="over-title">GAME OVER</div>
 
       <div className="over-stats">
@@ -29,7 +29,7 @@ export default function GameOverScreen({ score, best, onRetry, onMenu }) {
         ↻ RETRY
       </button>
 
-      <div className="hint">ENTER — заново</div>
+      <div className="hint">ENTER — retry</div>
 
       <button
         type="button"
@@ -39,7 +39,7 @@ export default function GameOverScreen({ score, best, onRetry, onMenu }) {
           onMenu()
         }}
       >
-        В МЕНЮ
+        MENU
       </button>
     </div>
   )

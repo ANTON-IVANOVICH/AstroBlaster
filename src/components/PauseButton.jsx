@@ -5,7 +5,7 @@ export default function PauseButton({ onPause }) {
     <button
       type="button"
       className="pause-button"
-      aria-label="Пауза"
+      aria-label="Pause"
       onClick={(e) => {
         e.currentTarget.blur()
         onPause()

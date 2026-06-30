@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import GameCanvas from './components/GameCanvas.jsx'
 import Hud from './components/Hud.jsx'
 import PauseButton from './components/PauseButton.jsx'
@@ -26,25 +26,28 @@ export default function App() {
     phaseRef.current = phase
   }, [phase])
 
-  const onHud = useCallback((h) => setHud(h), [])
-  const onGameOver = useCallback((finalScore) => {
+  // The React Compiler memoizes these automatically — no useCallback needed.
+  const onHud = (h) => setHud(h)
+  const onGameOver = (finalScore) => {
     setBest((b) => Math.max(b, finalScore))
     setPhase(PHASE.GAMEOVER)
-  }, [])
+  }
 
-  const startGame = useCallback(() => {
+  const startGame = () => {
     setHud(FRESH_HUD)
     setPhase(PHASE.PLAYING)
-  }, [])
+  }
 
-  const togglePause = useCallback(() => {
+  const togglePause = () => {
     setPhase((p) => (p === PHASE.PLAYING ? PHASE.PAUSED : p === PHASE.PAUSED ? PHASE.PLAYING : p))
-  }, [])
+  }
 
-  const toMenu = useCallback(() => setPhase(PHASE.MENU), [])
+  const toMenu = () => setPhase(PHASE.MENU)
 
+  // Pass the refs themselves (not `.current`) so App never reads a ref during
+  // render — that keeps App eligible for React Compiler memoization.
   useGameInput({
-    keys: keysRef.current,
+    keysRef,
     phaseRef,
     onStart: startGame,
     onTogglePause: togglePause,
@@ -56,8 +59,8 @@ export default function App() {
       <div className="cabinet">
         <GameCanvas
           phase={phase}
-          keys={keysRef.current}
-          pointer={pointerRef.current}
+          keysRef={keysRef}
+          pointerRef={pointerRef}
           onHud={onHud}
           onGameOver={onGameOver}
         />
@@ -73,7 +76,7 @@ export default function App() {
         )}
       </div>
 
-      <p className="footnote">WASD / стрелки · SPACE — огонь · ESC — пауза</p>
+      <p className="footnote">WASD / arrows · SPACE — fire · ESC — pause</p>
     </div>
   )
 }

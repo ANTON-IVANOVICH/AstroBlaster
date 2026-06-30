@@ -11,8 +11,9 @@ const RIGHT = new Set(['ArrowRight', 'KeyD'])
 const UP = new Set(['ArrowUp', 'KeyW'])
 const DOWN = new Set(['ArrowDown', 'KeyS'])
 
-export function useGameInput({ keys, phaseRef, onStart, onTogglePause, onRetry }) {
+export function useGameInput({ keysRef, phaseRef, onStart, onTogglePause, onRetry }) {
   useEffect(() => {
+    const keys = keysRef.current
     const onKeyDown = (e) => {
       const code = e.code
       if (LEFT.has(code)) { keys.left = true; e.preventDefault(); return }
@@ -73,5 +74,5 @@ export function useGameInput({ keys, phaseRef, onStart, onTogglePause, onRetry }
       window.removeEventListener('keyup', onKeyUp)
       window.removeEventListener('blur', clearAll)
     }
-  }, [keys, phaseRef, onStart, onTogglePause, onRetry])
+  }, [keysRef, phaseRef, onStart, onTogglePause, onRetry])
 }

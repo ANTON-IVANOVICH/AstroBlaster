@@ -3,7 +3,7 @@ export default function PauseOverlay({ onResume, onMenu }) {
   return (
     <div className="screen pause-screen">
       <div className="pause-mark">II</div>
-      <div className="pause-title">ПАУЗА</div>
+      <div className="pause-title">PAUSED</div>
 
       <button
         type="button"
@@ -13,10 +13,10 @@ export default function PauseOverlay({ onResume, onMenu }) {
           onResume()
         }}
       >
-        ПРОДОЛЖИТЬ
+        RESUME
       </button>
 
-      <div className="hint">ESC / P — продолжить</div>
+      <div className="hint">ESC / P — resume</div>
 
       <button
         type="button"
@@ -26,7 +26,7 @@ export default function PauseOverlay({ onResume, onMenu }) {
           onMenu()
         }}
       >
-        В МЕНЮ
+        MENU
       </button>
     </div>
   )

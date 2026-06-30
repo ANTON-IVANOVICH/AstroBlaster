@@ -7,7 +7,7 @@ export default function MenuScreen({ onPlay }) {
         <span className="title-cyan">ASTRO</span>
         <span className="title-light">BLASTER</span>
       </h1>
-      <p className="menu-tagline">Уворачивайся. Стреляй. Выживай в бесконечных волнах.</p>
+      <p className="menu-tagline">Dodge. Shoot. Survive the endless waves.</p>
 
       <button
         type="button"
@@ -26,20 +26,20 @@ export default function MenuScreen({ onPlay }) {
           <span className="key">A</span>
           <span className="key">S</span>
           <span className="key">D</span>
-          <span className="control-label">ДВИЖЕНИЕ</span>
+          <span className="control-label">MOVE</span>
         </div>
         <div className="control-row">
           <span className="key key-wide key-accent">SPACE</span>
-          <span className="control-label">ОГОНЬ</span>
+          <span className="control-label">FIRE</span>
         </div>
         <div className="control-row">
           <span className="key key-wide">ESC</span>
-          <span className="control-label">ПАУЗА</span>
+          <span className="control-label">PAUSE</span>
         </div>
       </div>
 
       <p className="touch-hint">
-        Веди пальцем по полю — корабль летит за пальцем и ведёт огонь автоматически. Кнопка «II» сверху — пауза.
+        Drag anywhere to fly — the ship follows your finger and auto-fires. Tap the “II” button at the top to pause.
       </p>
     </div>
   )
