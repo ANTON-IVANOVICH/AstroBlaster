@@ -1,0 +1,70 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import GameCanvas from './components/GameCanvas.jsx'
+import Hud from './components/Hud.jsx'
+import MenuScreen from './components/MenuScreen.jsx'
+import PauseOverlay from './components/PauseOverlay.jsx'
+import GameOverScreen from './components/GameOverScreen.jsx'
+import { useGameInput } from './hooks/useGameInput.js'
+import { PHASE, PLAYER } from './game/constants.js'
+import './App.css'
+
+const FRESH_HUD = { score: 0, lives: PLAYER.lives, wave: 1 }
+
+export default function App() {
+  const [phase, setPhase] = useState(PHASE.MENU)
+  const [hud, setHud] = useState(FRESH_HUD)
+  const [best, setBest] = useState(0)
+
+  // Shared keyboard ref the game loop reads each frame (never via state).
+  const keysRef = useRef({ left: false, right: false, up: false, down: false, fire: false })
+
+  // Latest phase, readable from the (stable) keyboard listener.
+  const phaseRef = useRef(phase)
+  useEffect(() => {
+    phaseRef.current = phase
+  }, [phase])
+
+  const onHud = useCallback((h) => setHud(h), [])
+  const onGameOver = useCallback((finalScore) => {
+    setBest((b) => Math.max(b, finalScore))
+    setPhase(PHASE.GAMEOVER)
+  }, [])
+
+  const startGame = useCallback(() => {
+    setHud(FRESH_HUD)
+    setPhase(PHASE.PLAYING)
+  }, [])
+
+  const togglePause = useCallback(() => {
+    setPhase((p) => (p === PHASE.PLAYING ? PHASE.PAUSED : p === PHASE.PAUSED ? PHASE.PLAYING : p))
+  }, [])
+
+  const toMenu = useCallback(() => setPhase(PHASE.MENU), [])
+
+  useGameInput({
+    keys: keysRef.current,
+    phaseRef,
+    onStart: startGame,
+    onTogglePause: togglePause,
+    onRetry: startGame,
+  })
+
+  return (
+    <div className="app">
+      <div className="cabinet">
+        <GameCanvas phase={phase} keys={keysRef.current} onHud={onHud} onGameOver={onGameOver} />
+
+        {(phase === PHASE.PLAYING || phase === PHASE.PAUSED) && (
+          <Hud score={hud.score} lives={hud.lives} wave={hud.wave} />
+        )}
+        {phase === PHASE.MENU && <MenuScreen onPlay={startGame} />}
+        {phase === PHASE.PAUSED && <PauseOverlay onResume={togglePause} onMenu={toMenu} />}
+        {phase === PHASE.GAMEOVER && (
+          <GameOverScreen score={hud.score} best={best} onRetry={startGame} onMenu={toMenu} />
+        )}
+      </div>
+
+      <p className="footnote">WASD / стрелки · SPACE — огонь · ESC — пауза</p>
+    </div>
+  )
+}

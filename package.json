@@ -1,0 +1,23 @@
+{
+  "name": "astroblaster",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AstroBlaster — vertical neon shmup built with React 19 + Canvas",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "vite": "^8.1.0"
+  }
+}
